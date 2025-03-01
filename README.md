@@ -1,27 +1,33 @@
-# DynamicForm
+## 📌 Project Overview  
+This is an Angular-based **Dynamic Form Builder** that generates a form from a JSON configuration. The form supports various field types, real-time validation, and data persistence using local storage.  
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.0.0.
+## 🚀 Features  
+✔️ Supports multiple input types (text, email, password, checkbox, select, etc.).  
+✔️ Dynamic validation rules from JSON schema.  
+✔️ Nested form groups & repeatable fields  
+✔️ Real-time validation feedback to users.  
+✔️ Auto-save form progress in local storage.  
+✔️ Displays live form data preview.  
+✔️ Bootstrap for styling & user experience.  
 
-## Development server
+---
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+## 🔧 Installation & Setup  
+Follow these simple steps to set up and run the project locally:
 
-## Code scaffolding
+### 1️⃣ **Clone the Repository**  
+```sh
+git clone https://github.com/yourusername/your-repo-name.git
+cd your-repo-name
+```
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+### 2️⃣ **Install Dependencies**  
+```sh
+npm install
+```
 
-## Build
+### 3️⃣ **Run the Development Server**  
+```sh
+ng serve
+```
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
-
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
