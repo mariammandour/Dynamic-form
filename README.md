@@ -17,7 +17,7 @@ Follow these simple steps to set up and run the project locally:
 
 ### 1️⃣ **Clone the Repository**  
 ```sh
-git clone https://github.com/yourusername/your-repo-name.git
+git clone https://github.com/mariammandour/Dynamic-form
 cd your-repo-name
 ```
 
