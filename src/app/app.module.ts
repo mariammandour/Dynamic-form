@@ -2,17 +2,17 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { DynamicFormComponent } from './dynamic-form/dynamic-form.component';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ToastModule } from './components/toast/toast.module';
+import { DynamicFormModule } from './dynamic-form/dynamic-form.module';
 @NgModule({
   declarations: [
-    AppComponent,
-    DynamicFormComponent
+    AppComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    ReactiveFormsModule
+    ToastModule,
+    DynamicFormModule
   ],
   providers: [],
   bootstrap: [AppComponent]

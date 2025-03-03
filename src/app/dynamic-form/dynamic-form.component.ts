@@ -1,7 +1,7 @@
-import { Component, ElementRef, Input, ViewChild } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { IForm, IFormControl, IValidator } from '../interface/form.interface';
-import { Toast } from 'bootstrap';
+import { ToastService } from '../services/toast.service';
 
 @Component({
   selector: 'app-dynamic-form',
@@ -10,11 +10,12 @@ import { Toast } from 'bootstrap';
 })
 export class DynamicFormComponent {
   @Input() formConfig!: IForm;
-  @ViewChild('successToast') successToast!: ElementRef;
-
   dynamicForm: FormGroup = this.fb.group({});
 
-  constructor(private fb: FormBuilder) { }
+  constructor(
+    private fb: FormBuilder,
+    private toastService: ToastService
+  ) { }
 
   ngOnInit() {
     if (this.formConfig?.formControls) {
@@ -69,8 +70,7 @@ export class DynamicFormComponent {
 
   onSubmit() {
     if (this.dynamicForm.valid) {
-      const toast = new Toast(this.successToast.nativeElement);
-      toast.show();
+      this.toastService.showToast('Form submitted successfully!', 'success');
       console.log(this.dynamicForm.value);
       this.dynamicForm.reset();
     } else {
@@ -182,5 +182,4 @@ export class DynamicFormComponent {
   getLocalStorage(key: string) {
     return JSON.parse(localStorage.getItem(key) || '{}');
   }
-
 }
