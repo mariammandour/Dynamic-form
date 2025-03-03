@@ -43,7 +43,7 @@
             (dynamicForm.get(control.name)?.touched)
         ">
                         <option *ngFor="let option of control.options" [value]="option.value">
-                            {{ option.label }}
+                            {{ option.label | capitalizeWords}}
                         </option>
                     </select>
                     <small *ngIf="

@@ -3,11 +3,13 @@ import { CommonModule } from '@angular/common';
 import { DynamicFormComponent } from './dynamic-form.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ToastModule } from '../components/toast/toast.module';
+import { CapitalizeWordsPipe } from '../pipes/capitalize-words.pipe';
 
 
 @NgModule({
   declarations: [
-    DynamicFormComponent
+    DynamicFormComponent,
+    CapitalizeWordsPipe
   ],
   imports: [
     CommonModule,
@@ -15,7 +17,8 @@ import { ToastModule } from '../components/toast/toast.module';
     ToastModule
   ],
   exports:[
-    DynamicFormComponent
+    DynamicFormComponent,
+    
   ]
 })
 export class DynamicFormModule { }

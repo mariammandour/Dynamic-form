@@ -80,18 +80,18 @@ export const registerFormConfig: IForm = {
             options: [
                 {
                     id: 1,
-                    value: 'Egypt',
-                    label: 'Egypt',
+                    value: 'egypt',
+                    label: 'egypt',
                 },
                 {
                     id: 2,
-                    value: 'Saudi Arabia',
-                    label: 'Saudi Arabia',
+                    value: 'saudi Arabia',
+                    label: 'saudi Arabia',
                 },
                 {
                     id: 3,
-                    value: 'United Arab Emirates',
-                    label: 'United Arab Emirates',
+                    value: 'united Arab Emirates',
+                    label: 'united Arab Emirates',
                 },
                 {
                     id: 4,
