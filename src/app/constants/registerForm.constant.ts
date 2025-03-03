@@ -73,6 +73,31 @@ export const registerFormConfig: IForm = {
             ],
         },
         {
+            name: 'age',
+            label: 'Age',
+            class: 'col-md-6',
+            type: 'number',
+            validators: [
+                {
+                    validatorName: 'required',
+                    message: 'Age is Required',
+                }
+            ],
+        }
+        ,
+        {
+            name: 'desc',
+            label: 'describtion',
+            class: 'col-md-6',
+            type: 'textarea',
+            validators: [
+                {
+                    validatorName: 'required',
+                    message: 'describtion is Required',
+                }
+            ],
+        },
+        {
             name: 'country',
             label: 'Country',
             class: 'col-md-6',
@@ -181,6 +206,7 @@ export const registerFormConfig: IForm = {
                 },
             ]
         },
+
         {
             name: "privacyPolicy",
             label: "I accept the terms and conditions and privacy policy",

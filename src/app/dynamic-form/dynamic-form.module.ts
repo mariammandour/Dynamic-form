@@ -4,12 +4,13 @@ import { DynamicFormComponent } from './dynamic-form.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ToastModule } from '../components/toast/toast.module';
 import { CapitalizeWordsPipe } from '../pipes/capitalize-words.pipe';
-
+import { SeeMoreLessDirective } from '../directives/see-more-less.directive';
 
 @NgModule({
   declarations: [
     DynamicFormComponent,
-    CapitalizeWordsPipe
+    CapitalizeWordsPipe,
+    SeeMoreLessDirective
   ],
   imports: [
     CommonModule,

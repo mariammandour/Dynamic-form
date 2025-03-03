@@ -179,9 +179,16 @@
                                             getValues(control,nestedControl)
                                             }}</td>
                                     </ng-container>
-                                    <ng-container *ngIf="control.type !== 'nested'">
+                                    <ng-container *ngIf="control.type !== 'nested' && control.type !== 'textarea'">
                                         <td *ngIf="!!getValues(control)" [class]="getStatus(control)">{{
                                             getValues(control) }}</td>
+                                        <td *ngIf="!getValues(control)" [class]="getStatus(control)"></td>
+                                    </ng-container>
+                                    <ng-container *ngIf="control.type === 'textarea'">
+                                        <td *ngIf="!!getValues(control)" [class]="getStatus(control)">
+                                            <span appSeeMoreLess
+                                                [fullText]="getValues(control)"></span>
+                                        </td>
                                         <td *ngIf="!getValues(control)" [class]="getStatus(control)"></td>
                                     </ng-container>
                                 </tr>
