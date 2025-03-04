@@ -1,159 +1,147 @@
 <h3 class="text-center py-3">{{ formConfig.formTitle || 'My Form' }}</h3>
 <div class="row">
     <div class="col-lg-12">
-        <form #myForm="ngForm" [formGroup]="dynamicForm" class="row g-3 ">
+        <form #myForm="ngForm" [formGroup]="dynamicForm" class="row g-3">
             <ng-container *ngFor="let control of formConfig.formControls">
-                <div *ngIf="
-        ['text', 'email', 'password', 'number', 'date'].includes(control.type)
-        " [class]="control?.class">
-                    <label for="{{ control.name }}" class="form-label">{{
-                        control.label
-                        }}</label>
-                    <input class="form-control" formControlName="{{ control?.name }}" [type]="control?.type"
-                        [class.input-invalid]="
-            dynamicForm.get(control.name)?.invalid &&
-            (dynamicForm.get(control.name)?.touched)
-        " />
-                    <small *ngIf="
-            dynamicForm.get(control.name)?.invalid &&
-            (dynamicForm.get(control.name)?.touched)
-        " class="text-danger">
-                        {{ getErrorMessage(control) }}
-                    </small>
-                </div>
-                <div *ngIf="control.type === 'checkbox'" [class]="control?.class">
-                    <input class="form-check-input me-2" type="checkbox" formControlName="{{ control?.name }}" />
-                    <label for="{{ control.name }}" class="form-label">{{
-                        control.label
-                        }}</label>
-                    <br>
-                    <small *ngIf="
-            dynamicForm.get(control.name)?.invalid &&
-            (dynamicForm.get(control.name)?.touched)
-        " class="text-danger">
-                        {{ getErrorMessage(control) }}
-                    </small>
-                </div>
-                <div *ngIf="control.type === 'select'" [class]="control?.class">
-                    <label for="{{ control.name }}" class="form-label">{{
-                        control.label
-                        }}</label>
-                    <select class="form-select" formControlName="{{ control?.name }}" [class.input-invalid]="
-            dynamicForm.get(control.name)?.invalid &&
-            (dynamicForm.get(control.name)?.touched)
-        ">
-                        <option *ngFor="let option of control.options" [value]="option.value">
-                            {{ option.label | capitalizeWords}}
-                        </option>
-                    </select>
-                    <small *ngIf="
-            dynamicForm.get(control.name)?.invalid &&
-            (dynamicForm.get(control.name)?.touched)
-        " class="text-danger">
-                        {{ getErrorMessage(control) }}
-                    </small>
-                </div>
-                <div *ngIf="control.type === 'radio'" [class]="control?.class">
-                    <label for="{{ control.name }}" class="form-label">{{
-                        control.label
-                        }}</label>
-                    <div *ngFor="let option of control.options" [class]="control?.class">
-                        <input class="form-check-input me-2" type="radio" formControlName="{{ control?.name }}"
-                            [value]="option.value" />
-                        <label for="{{ control.name }}" class="form-label">{{
-                            option.label
-                            }}</label>
+                <!-- Text, Email, Password, Number, Date Inputs -->
+                <ng-container *ngIf="['text', 'email', 'password', 'number', 'date'].includes(control.type)">
+                    <div [class]="control?.class">
+                        <label for="{{ control.name }}" class="form-label">{{ control.label }}</label>
+                        <input class="form-control" formControlName="{{ control?.name }}" [type]="control?.type"
+                            [class.input-invalid]="dynamicForm.get(control.name)?.invalid && dynamicForm.get(control.name)?.touched" />
+                        <small *ngIf="dynamicForm.get(control.name)?.invalid && dynamicForm.get(control.name)?.touched"
+                            class="text-danger">
+                            {{ getErrorMessage(control) }}
+                        </small>
                     </div>
-                    <small *ngIf="
-            dynamicForm.get(control.name)?.invalid &&
-            (dynamicForm.get(control.name)?.touched )
-        " class="text-danger">
-                        {{ getErrorMessage(control) }}
-                    </small>
-                </div>
-                <div *ngIf="control.type === 'textarea'" [class]="control?.class">
-                    <label for="{{ control.name }}" class="form-label">{{
-                        control.label
-                        }}</label>
-                    <textarea class="form-control" formControlName="{{ control?.name }}"></textarea>
-                    <small *ngIf="
-            dynamicForm.get(control.name)?.invalid &&
-            (dynamicForm.get(control.name)?.touched )
-        " class="text-danger">
-                        {{ getErrorMessage(control) }}
-                    </small>
-                </div>
-                <div *ngIf="control.type === 'nested'" [class]="control?.class">
-                    <hr>
-                    <fieldset [formGroupName]="control.name">
-                        <legend>{{ control.label }}</legend>
-                        <div class="row g-3">
-                            <ng-container *ngFor="let nestedControl of control.nestedControls">
-                                <div [class]="nestedControl?.class">
-                                    <label [for]="nestedControl.name" class="form-label">
-                                        {{ nestedControl.label }}
-                                    </label>
-                                    <input class="form-control" [formControlName]="nestedControl.name"
-                                        [type]="nestedControl.type" [class.input-invalid]="
-                                        dynamicForm.get(control.name)?.get(nestedControl.name)?.invalid &&
-                                        (dynamicForm.get(control.name)?.get(nestedControl.name)?.touched )
-                                " />
-                                    <small *ngIf="
-                                dynamicForm.get(control.name)?.get(nestedControl.name)?.invalid &&
-                                (dynamicForm.get(control.name)?.get(nestedControl.name)?.touched )
-                            " class="text-danger">
-                                        {{ getErrorMessage(control,nestedControl) }}
-                                    </small>
-                                </div>
-                            </ng-container>
-                        </div>
-                    </fieldset>
-                </div>
-                <div *ngIf="control.type === 'array'" [class]="control?.class">
-                    <hr>
-                    <fieldset [formArrayName]="control.name">
-                        <legend>{{ control.label }}</legend>
-                        <div class="row g-3">
-                            <ng-container
-                                *ngFor="let nestedControl of getControlArray(control)?.controls; let i = index">
-                                <div class="col-lg-6">
-                                    <label [for]="control.name" class="form-label">
-                                        {{ control.fieldLabel + ' ' + (i+1) }}
-                                    </label>
-                                    <input class="form-control" [formControlName]="i" [type]="control.fieldType"
-                                        [class.input-invalid]="
-                                        dynamicForm.get(control.name)?.get(i.toString())?.invalid &&
-                                        (dynamicForm.get(control.name)?.get(i.toString())?.touched  || dynamicForm.get(control.name)?.touched)
-                                " />
-                                    <small *ngIf="
-                                dynamicForm.get(control.name)?.get(i.toString())?.invalid &&
-                                (dynamicForm.get(control.name)?.get(i.toString())?.touched|| dynamicForm.get(control.name)?.touched )
-                            " class="text-danger">
-                                        {{ getErrorMessage(control) }}
-                                    </small>
-                                </div>
-                            </ng-container>
-                            <div class="col-12 d-flex justify-content-between">
-                                <button class="btn btn-danger" (click)="removeNestedControl(control)">Remove</button>
-                                <button class="btn btn-primary" (click)="addNestedControl(control)">Add</button>
-                            </div>
-                        </div>
-                    </fieldset>
-                    <hr>
-                </div>
+                </ng-container>
 
+                <!-- Checkbox Input -->
+                <ng-container *ngIf="control.type === 'checkbox'">
+                    <div [class]="control?.class">
+                        <input class="form-check-input me-2" type="checkbox" formControlName="{{ control?.name }}" />
+                        <label for="{{ control.name }}" class="form-label">{{ control.label }}</label>
+                        <br>
+                        <small *ngIf="dynamicForm.get(control.name)?.invalid && dynamicForm.get(control.name)?.touched"
+                            class="text-danger">
+                            {{ getErrorMessage(control) }}
+                        </small>
+                    </div>
+                </ng-container>
+
+                <!-- Select Input -->
+                <ng-container *ngIf="control.type === 'select'">
+                    <div [class]="control?.class">
+                        <label for="{{ control.name }}" class="form-label">{{ control.label }}</label>
+                        <select class="form-select" formControlName="{{ control?.name }}"
+                            [class.input-invalid]="dynamicForm.get(control.name)?.invalid && dynamicForm.get(control.name)?.touched">
+                            <option *ngFor="let option of control.options" [value]="option.value">
+                                {{ option.label | capitalizeWords }}
+                            </option>
+                        </select>
+                        <small *ngIf="dynamicForm.get(control.name)?.invalid && dynamicForm.get(control.name)?.touched"
+                            class="text-danger">
+                            {{ getErrorMessage(control) }}
+                        </small>
+                    </div>
+                </ng-container>
+
+                <!-- Radio Input -->
+                <ng-container *ngIf="control.type === 'radio'">
+                    <div [class]="control?.class">
+                        <label for="{{ control.name }}" class="form-label">{{ control.label }}</label>
+                        <div *ngFor="let option of control.options" [class]="control?.class">
+                            <input class="form-check-input me-2" type="radio" formControlName="{{ control?.name }}"
+                                [value]="option.value" />
+                            <label for="{{ control.name }}" class="form-label">{{ option.label }}</label>
+                        </div>
+                        <small *ngIf="dynamicForm.get(control.name)?.invalid && dynamicForm.get(control.name)?.touched"
+                            class="text-danger">
+                            {{ getErrorMessage(control) }}
+                        </small>
+                    </div>
+                </ng-container>
+
+                <!-- Textarea Input -->
+                <ng-container *ngIf="control.type === 'textarea'">
+                    <div [class]="control?.class">
+                        <label for="{{ control.name }}" class="form-label">{{ control.label }}</label>
+                        <textarea class="form-control" formControlName="{{ control?.name }}"
+                            [class.input-invalid]="dynamicForm.get(control.name)?.invalid && dynamicForm.get(control.name)?.touched"></textarea>
+                        <small *ngIf="dynamicForm.get(control.name)?.invalid && dynamicForm.get(control.name)?.touched"
+                            class="text-danger">
+                            {{ getErrorMessage(control) }}
+                        </small>
+                    </div>
+                </ng-container>
+
+                <!-- Nested Controls -->
+                <ng-container *ngIf="control.type === 'nested'">
+                    <div [class]="control?.class">
+                        <hr>
+                        <fieldset [formGroupName]="control.name">
+                            <legend>{{ control.label }}</legend>
+                            <div class="row g-3">
+                                <ng-container *ngFor="let nestedControl of control.nestedControls">
+                                    <div [class]="nestedControl?.class">
+                                        <label [for]="nestedControl.name" class="form-label">{{ nestedControl.label
+                                            }}</label>
+                                        <input class="form-control" [formControlName]="nestedControl.name"
+                                            [type]="nestedControl.type"
+                                            [class.input-invalid]="dynamicForm.get(control.name)?.get(nestedControl.name)?.invalid && dynamicForm.get(control.name)?.get(nestedControl.name)?.touched" />
+                                        <small
+                                            *ngIf="dynamicForm.get(control.name)?.get(nestedControl.name)?.invalid && dynamicForm.get(control.name)?.get(nestedControl.name)?.touched"
+                                            class="text-danger">
+                                            {{ getErrorMessage(control, nestedControl) }}
+                                        </small>
+                                    </div>
+                                </ng-container>
+                            </div>
+                        </fieldset>
+                    </div>
+                </ng-container>
+
+                <!-- Array Controls -->
+                <ng-container *ngIf="control.type === 'array'">
+                    <div [class]="control?.class">
+                        <hr>
+                        <fieldset [formArrayName]="control.name">
+                            <legend>{{ control.label }}</legend>
+                            <div class="row g-3">
+                                <ng-container
+                                    *ngFor="let nestedControl of getControlArray(control)?.controls; let i = index">
+                                    <div class="col-lg-6">
+                                        <label [for]="control.name" class="form-label">{{ control.fieldLabel + ' ' + (i
+                                            + 1) }}</label>
+                                        <input class="form-control" [formControlName]="i" [type]="control.fieldType"
+                                            [class.input-invalid]="dynamicForm.get(control.name)?.get(i.toString())?.invalid && (dynamicForm.get(control.name)?.get(i.toString())?.touched || dynamicForm.get(control.name)?.touched)" />
+                                        <small
+                                            *ngIf="dynamicForm.get(control.name)?.get(i.toString())?.invalid && (dynamicForm.get(control.name)?.get(i.toString())?.touched || dynamicForm.get(control.name)?.touched)"
+                                            class="text-danger">
+                                            {{ getErrorMessage(control) }}
+                                        </small>
+                                    </div>
+                                </ng-container>
+                                <div class="col-12 d-flex justify-content-between">
+                                    <button class="btn btn-danger"
+                                        (click)="removeNestedControl(control)">Remove</button>
+                                    <button class="btn btn-primary" (click)="addNestedControl(control)">Add</button>
+                                </div>
+                            </div>
+                        </fieldset>
+                        <hr>
+                    </div>
+                </ng-container>
             </ng-container>
 
+            <!-- Form Buttons -->
             <div class="col-12 d-flex justify-content-between">
-                <button (click)="onSubmit()" type="submit" class="btn btn-primary">
-                    {{ formConfig.saveBtnTitle || 'Save' }}
-                </button>
-                <button (click)="onReset()" type="reset" class="btn btn-secondary">
-                    {{ formConfig.resetBtnTitle || 'Reset' }}
-                </button>
+                <button (click)="onSubmit()" type="submit" class="btn btn-primary">{{ formConfig.saveBtnTitle || 'Save'
+                    }}</button>
+                <button (click)="onReset()" type="reset" class="btn btn-secondary">{{ formConfig.resetBtnTitle ||
+                    'Reset' }}</button>
             </div>
-
         </form>
     </div>
-
     <app-form-preview [dynamicForm]="dynamicForm" [formConfig]="formConfig"></app-form-preview>
+</div>

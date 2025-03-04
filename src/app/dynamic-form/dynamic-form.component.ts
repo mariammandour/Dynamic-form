@@ -1,65 +1,69 @@
 import { Component, Input } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormArray,
+  FormBuilder,
+  FormGroup,
+  ValidatorFn,
+  Validators,
+} from '@angular/forms';
 import { IForm, IFormControl, IValidator } from '../interface/form.interface';
 import { ToastService } from '../services/toast.service';
 
 @Component({
   selector: 'app-dynamic-form',
   templateUrl: './dynamic-form.component.html',
-  styleUrl: './dynamic-form.component.scss',
+  styleUrls: ['./dynamic-form.component.scss'],
 })
 export class DynamicFormComponent {
   @Input() formConfig!: IForm;
   dynamicForm: FormGroup = this.fb.group({});
 
-  constructor(
-    private fb: FormBuilder,
-    private toastService: ToastService
-  ) { }
+  constructor(private fb: FormBuilder, private toastService: ToastService) {}
 
   ngOnInit() {
     if (this.formConfig?.formControls) {
-      const formGroup: any = {};
-      this.formConfig.formControls.forEach((control: IFormControl) => {
-        let controlValidators: any = [];
-        if (control.type === 'nested') {
-          const nestedFormGroup: any = {};
-          control.nestedControls?.forEach((nestedControl: IFormControl) => {
-            let nestedValidators: any = [];
-            if (nestedControl.validators) {
-              nestedValidators = this.checkValidators(nestedControl.validators);
-            }
-            nestedFormGroup[nestedControl.name] = [nestedControl.value || '', nestedValidators];
-          });
-          formGroup[control.name] = this.fb.group(nestedFormGroup);
-        } else if (control.type === 'array') {
-          const nestedFormGroup: any = [];
-          if (control.validators) {
-            controlValidators = this.checkValidators(control.validators);
-          }
-          nestedFormGroup.push(this.fb.control(
-            control.value || '',
-            controlValidators
-          ));
-          formGroup[control.name] = this.fb.array(nestedFormGroup);
-        }
-        else {
-          if (control.validators) {
-            controlValidators = this.checkValidators(control.validators);
-          }
-          formGroup[control.name] = [control.value || '', controlValidators];
-        }
-      });
-      this.dynamicForm = this.fb.group(formGroup);
+      this.dynamicForm = this.createFormGroup(this.formConfig.formControls);
     }
 
     const formData = this.getLocalStorage('formData');
-
     if (formData) {
       this.dynamicForm.patchValue(formData);
     }
 
     this.watchFormChanges();
+  }
+
+  createFormGroup(controls: IFormControl[]): FormGroup {
+    const formGroup: Record<string, any> = {};
+    controls.forEach((control: IFormControl) => {
+      formGroup[control.name] = this.createFormControl(control);
+    });
+    return this.fb.group(formGroup);
+  }
+
+  createFormControl(control: IFormControl) {
+    let controlValidators: ValidatorFn[] = [];
+    if (control.validators) {
+      controlValidators = this.checkValidators(control.validators);
+    }
+
+    if (control.type === 'nested') {
+      const nestedFormGroup: Record<string, any> = {};
+      control.nestedControls?.forEach((nestedControl: IFormControl) => {
+        nestedFormGroup[nestedControl.name] = [
+          nestedControl.value || '',
+          this.checkValidators(nestedControl.validators || []),
+        ];
+      });
+      return this.fb.group(nestedFormGroup);
+    } else if (control.type === 'array') {
+      return this.fb.array([
+        this.fb.control(control.value || '', controlValidators),
+      ]);
+    } else {
+      return [control.value || '', controlValidators];
+    }
   }
 
   watchFormChanges() {
@@ -84,57 +88,61 @@ export class DynamicFormComponent {
 
   getErrorMessage(control: IFormControl, nestedControl?: IFormControl): string {
     let errorMessage = '';
-    let myControl: any;
+    let myControl: AbstractControl | null;
 
     if (nestedControl) {
       const formGroup = this.dynamicForm.get(control.name) as FormGroup;
       myControl = formGroup.get(nestedControl.name);
-      if (myControl?.touched) {
-        nestedControl.validators?.forEach((validator: IValidator) => {
-          if (myControl?.hasError(validator.validatorName as string)) {
-            errorMessage = validator.message as string;
-          }
-        });
-      }
-    }
-    else {
+    } else {
       myControl = this.dynamicForm.get(control.name);
       if (myControl instanceof FormArray) {
         myControl = myControl.controls[0];
       }
-      if (myControl?.touched) {
-        control.validators?.forEach((validator: IValidator) => {
-          if (myControl?.hasError(validator.validatorName as string)) {
-            errorMessage = validator.message as string;
-          }
-        });
-      }
+    }
+
+    if (myControl?.touched) {
+      const validators = nestedControl
+        ? nestedControl.validators
+        : control.validators;
+      validators?.forEach((validator: IValidator) => {
+        if (myControl?.hasError(validator.validatorName as string)) {
+          errorMessage = validator.message as string;
+        }
+      });
     }
 
     return errorMessage;
   }
 
-  checkValidators(validators: IValidator[]) {
-    const controlValidators: any = [];
-    if (validators) {
-      validators.forEach((val: IValidator) => {
-        if (val.validatorName === 'required') controlValidators.push(Validators.required);
-        if (val.validatorName === 'email') controlValidators.push(Validators.email);
-        if (val.validatorName === 'minlength') controlValidators.push(Validators.minLength(val.minLength as number));
-        if (val.validatorName === 'pattern') controlValidators.push(Validators.pattern(val.pattern as string));
-        if (val.validatorName === 'maxlength') controlValidators.push(Validators.maxLength(val.maxLength as number));
-      });
-    }
+  checkValidators(validators: IValidator[]): ValidatorFn[] {
+    const controlValidators: ValidatorFn[] = [];
+    validators.forEach((val: IValidator) => {
+      switch (val.validatorName) {
+        case 'required':
+          controlValidators.push(Validators.required);
+          break;
+        case 'email':
+          controlValidators.push(Validators.email);
+          break;
+        case 'minlength':
+          controlValidators.push(Validators.minLength(val.minLength as number));
+          break;
+        case 'pattern':
+          controlValidators.push(Validators.pattern(val.pattern as string));
+          break;
+        case 'maxlength':
+          controlValidators.push(Validators.maxLength(val.maxLength as number));
+          break;
+      }
+    });
     return controlValidators;
   }
 
   addNestedControl(control: IFormControl) {
     const formGroup = this.dynamicForm.get(control.name) as FormArray;
-    let controlValidators: any = [];
-    if (control.validators) {
-      controlValidators = this.checkValidators(control.validators);
-    }
-    formGroup.push(this.fb.control('', controlValidators));
+    formGroup.push(
+      this.fb.control('', this.checkValidators(control.validators || []))
+    );
   }
 
   removeNestedControl(control: IFormControl) {
@@ -145,7 +153,7 @@ export class DynamicFormComponent {
   }
 
   private markFormGroupTouched(formGroup: FormGroup) {
-    Object.values(formGroup.controls).forEach(control => {
+    Object.values(formGroup.controls).forEach((control) => {
       if (control instanceof FormGroup) {
         this.markFormGroupTouched(control);
       } else {
@@ -156,14 +164,22 @@ export class DynamicFormComponent {
 
   getControlArray(control: IFormControl): FormArray {
     return this.dynamicForm.get(control.name) as FormArray;
-
   }
 
   setLocalStorage(key: string, value: any) {
-    localStorage.setItem(key, JSON.stringify(value));
+    try {
+      localStorage.setItem(key, JSON.stringify(value));
+    } catch (e) {
+      console.error('Error saving to localStorage', e);
+    }
   }
 
   getLocalStorage(key: string) {
-    return JSON.parse(localStorage.getItem(key) || '{}');
+    try {
+      return JSON.parse(localStorage.getItem(key) || '{}');
+    } catch (e) {
+      console.error('Error reading from localStorage', e);
+      return null;
+    }
   }
 }
