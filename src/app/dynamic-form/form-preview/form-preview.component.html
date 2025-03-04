@@ -1,0 +1,44 @@
+<div class="col-lg-12">
+    <div class="form-data-container mt-5 border rounded p-3">
+        <div class="form-data-item">
+            <h5 class="text-center text-primary py-3">Form Data</h5>
+            <div class="form-data-item-content">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Label</th>
+                            <th scope="col">Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <ng-container *ngFor="let control of formConfig.formControls; let i = index">
+                            <tr>
+                                <th scope="row">{{ i+1 }}</th>
+                                <th scope="col">{{ control.name }}</th>
+                                <ng-container *ngIf="control.type === 'nested'">
+                                    <td [class]="getStatus(control)">
+                                        <ng-container *ngFor="let nestedControl of control.nestedControls">
+                                            {{ getValues(control, nestedControl) }}
+                                        </ng-container>
+                                    </td>
+                                </ng-container>
+                                <ng-container *ngIf="control.type !== 'nested' && control.type !== 'textarea'">
+                                    <td *ngIf="getValues(control)" [class]="getStatus(control)">{{
+                                        getValues(control) }}</td>
+                                    <td *ngIf="!getValues(control)" [class]="getStatus(control)"></td>
+                                </ng-container>
+                                <ng-container *ngIf="control.type === 'textarea'">
+                                    <td *ngIf="getValues(control)" [class]="getStatus(control)">
+                                        <span appSeeMoreLess [fullText]="getValues(control)"></span>
+                                    </td>
+                                    <td *ngIf="!getValues(control)" [class]="getStatus(control)"></td>
+                                </ng-container>
+                            </tr>
+                        </ng-container>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

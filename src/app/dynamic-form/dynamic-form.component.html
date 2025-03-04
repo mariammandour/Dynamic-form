@@ -1,6 +1,6 @@
 <h3 class="text-center py-3">{{ formConfig.formTitle || 'My Form' }}</h3>
 <div class="row">
-    <div class="col-lg-8">
+    <div class="col-lg-12">
         <form #myForm="ngForm" [formGroup]="dynamicForm" class="row g-3 ">
             <ng-container *ngFor="let control of formConfig.formControls">
                 <div *ngIf="
@@ -155,47 +155,5 @@
 
         </form>
     </div>
-    <div class="col-lg-4">
-        <div class="form-data-container mt-5 border rounded p-3">
-            <div class="form-data-item">
-                <h5 class="text-center text-primary py-3">Form Data</h5>
-                <div class="form-data-item-content">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th scope="col">#</th>
-                                <th scope="col">Label</th>
-                                <th scope="col">Value</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <ng-container *ngFor="let control of formConfig.formControls; let i = index">
-                                <tr>
-                                    <th scope="row">{{ i+1 }}</th>
-                                    <th scope="row">{{ control.name }}</th>
-                                    <ng-container *ngIf="control.type === 'nested'">
-                                        <td *ngFor="let nestedControl of control.nestedControls"
-                                            [class]="getStatus(control,nestedControl)">{{
-                                            getValues(control,nestedControl)
-                                            }}</td>
-                                    </ng-container>
-                                    <ng-container *ngIf="control.type !== 'nested' && control.type !== 'textarea'">
-                                        <td *ngIf="!!getValues(control)" [class]="getStatus(control)">{{
-                                            getValues(control) }}</td>
-                                        <td *ngIf="!getValues(control)" [class]="getStatus(control)"></td>
-                                    </ng-container>
-                                    <ng-container *ngIf="control.type === 'textarea'">
-                                        <td *ngIf="!!getValues(control)" [class]="getStatus(control)">
-                                            <span appSeeMoreLess
-                                                [fullText]="getValues(control)"></span>
-                                        </td>
-                                        <td *ngIf="!getValues(control)" [class]="getStatus(control)"></td>
-                                    </ng-container>
-                                </tr>
-                            </ng-container>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
+
+    <app-form-preview [dynamicForm]="dynamicForm" [formConfig]="formConfig"></app-form-preview>
