@@ -3,6 +3,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { AppComponent } from './app.component';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { DynamicFormComponent } from './dynamic-form/dynamic-form.component';
+import { FormPreviewComponent } from './dynamic-form/form-preview/form-preview.component';
 
 describe('AppComponent', () => {
   beforeEach(async () => {
@@ -14,7 +15,8 @@ describe('AppComponent', () => {
       ],
       declarations: [
         AppComponent,
-        DynamicFormComponent
+        DynamicFormComponent,
+        FormPreviewComponent
       ]
     }).compileComponents();
   });
